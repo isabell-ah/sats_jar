@@ -28,7 +28,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: '*', // Allow all origins for development
+    origin: ['http://localhost:8080', 'https://web-tau-blush.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
@@ -116,8 +116,5 @@ app.use((req, res, next) => {
 
 // Error handling middleware
 app.use(errorHandler);
-
-// Export the app for server.js to use
-// Do not start the server here as it's handled in server.js
 
 module.exports = app;

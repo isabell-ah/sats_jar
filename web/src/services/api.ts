@@ -2,8 +2,26 @@ import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/UserAuthContext';
 
 // Make sure we're using the correct API URL
-const API_URL = 'http://localhost:3000/api';
-console.log('Using API URL:', API_URL);
+// const API_URL =
+//   process.env.NODE_ENV === 'production'
+//     ? 'https://sats-jar-1-50pp.onrender.com/api'
+//     : 'http://localhost:3000/api';
+// console.log('Using API URL:', API_URL);
+// const API_URL =
+//   import.meta.env.VITE_API_URL ||
+//   (import.meta.env.MODE === 'production'
+//     ? 'https://sats-jar-1-50pp.onrender.com/api'
+//     : 'http://localhost:3001/api');
+
+const API_URL =
+  import.meta.env.MODE === 'production'
+    ? import.meta.env.VITE_API_URL || 'https://sats-jar-1-50pp.onrender.com/api'
+    : '/api';
+
+// Log only in development for debugging
+if (import.meta.env.MODE !== 'production') {
+  console.log('Using API URL:', API_URL);
+}
 
 export interface AuthResponse {
   token: string;
