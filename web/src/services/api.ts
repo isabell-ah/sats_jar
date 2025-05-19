@@ -3,14 +3,11 @@ import { useAuth } from '@/contexts/UserAuthContext';
 
 // Make sure we're using the correct API URL
 const API_URL =
-  import.meta.env.MODE === 'production'
-    ? 'https://sats-jar-1-50pp.onrender.com/api'
-    : '/api';
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? 'https://sats-jar-1-50pp.onrender.com/api' : '/api');
 
-// Log only in development for debugging
-if (import.meta.env.MODE !== 'production') {
-  console.log('Using API URL:', API_URL);
-}
+// Log API URL for debugging
+console.log('Using API URL:', API_URL);
 
 export interface AuthResponse {
   token: string;
