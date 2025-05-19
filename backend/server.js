@@ -9,12 +9,16 @@ const PORT = config.server.port || 3000;
 // Start the server
 const server = app.listen(PORT, () => {
   logger.info(`Sats Jar Junior API running on port ${PORT}`);
-  logger.info(`Server URL: http://localhost:${PORT}`);
-  
+  logger.info(`Server URL: ${config.server.baseUrl}`);
+
   // Log configuration for debugging
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info('JWT Secret configured:', !!config.server.jwtSecret);
   logger.info('Firebase initialized with project:', config.firebase.projectId);
+  logger.info(
+    'CORS origins:',
+    JSON.stringify(app.get('corsOrigins') || 'Not explicitly set')
+  );
 });
 
 // Handle unhandled promise rejections
