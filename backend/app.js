@@ -28,9 +28,14 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ['http://localhost:8080', 'https://web-tau-blush.vercel.app'],
+    origin: [
+      'http://localhost:8080',
+      'https://web-tau-blush.vercel.app',
+      'https://web-5vwjbrgjd-isabell-ahs-projects.vercel.app',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   })
 );
 

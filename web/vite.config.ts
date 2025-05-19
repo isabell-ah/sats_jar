@@ -9,8 +9,11 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       '/api': {
-        target: 'http://localhost:300',
+        // target: 'http://localhost:3000/api',
+
+        target: 'https://sats-jar-1-50pp.onrender.com',
         changeOrigin: true,
+        secure: false,
       },
     },
   },

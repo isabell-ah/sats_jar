@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,10 +20,38 @@ const LoginForm: React.FC<LoginFormProps> = ({ onRegister, onChildLogin }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
+  const [apiStatus, setApiStatus] = useState<string>(
+    'Checking API connection...'
+  );
   const navigate = useNavigate();
 
   const { toast } = useToast();
   const { login } = useAuth();
+
+  useEffect(() => {
+    const checkApiConnection = async () => {
+      try {
+        const response = await fetch(`${API_URL}/health`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          mode: 'cors',
+        });
+
+        if (response.ok) {
+          setApiStatus('API connected successfully');
+        } else {
+          setApiStatus(
+            `API connection failed: ${response.status} ${response.statusText}`
+          );
+        }
+      } catch (error) {
+        console.error('API connection check failed:', error);
+        setApiStatus(`API connection error: ${error.message}`);
+      }
+    };
+
+    checkApiConnection();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,17 +65,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onRegister, onChildLogin }) => {
           title: 'Error',
           description: 'Please fill in all fields',
         });
+        setLoading(false);
         return;
       }
 
-      // Format phone number
-      // let formattedPhone = phoneNumber.replace(/\+/g, '');
-      // if (formattedPhone.startsWith('0')) {
-      //   formattedPhone = '254' + formattedPhone.substring(1);
-      // }
-      // if (!formattedPhone.startsWith('254')) {
-      //   formattedPhone = '254' + formattedPhone;
-      // }
+      console.log(`Attempting to connect to ${API_URL}/auth/login`);
 
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
@@ -55,22 +77,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onRegister, onChildLogin }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          // phoneNumber: formattedPhone,
           phoneNumber,
           pin,
         }),
+        mode: 'cors',
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Login failed');
-      }
+      console.log('Login response status:', response.status);
 
       const result = await response.json();
-      console.log('Login successful, result:', {
-        token: result.token ? 'Token received' : 'No token',
-        user: result.user ? 'User data received' : 'No user data',
-      });
+      console.log('Login response:', result);
+
+      if (!response.ok) {
+        throw new Error(
+          result.error || `Login failed with status: ${response.status}`
+        );
+      }
 
       // Use the auth context to log in
       login(result.token, result.user);
@@ -86,6 +108,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onRegister, onChildLogin }) => {
       console.log('Navigating to dashboard...');
       navigate('/');
     } catch (error: any) {
+      console.error('Login error details:', error);
       toast({
         variant: 'destructive',
         title: 'Login Failed',
@@ -146,6 +169,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onRegister, onChildLogin }) => {
               className='border-amber-200 focus:border-amber-500'
             />
           </div>
+
+          <div className='text-sm text-gray-500 mb-4'>{apiStatus}</div>
 
           <div className='pt-4'>
             <Button
