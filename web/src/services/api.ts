@@ -2,7 +2,11 @@ import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/UserAuthContext';
 
 // Make sure we're using the correct API URL
-const API_URL = 'http://localhost:3000/api';
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? 'https://sats-jar-1-50pp.onrender.com/api' : '/api');
+
+// Log API URL for debugging
 console.log('Using API URL:', API_URL);
 
 export interface AuthResponse {
